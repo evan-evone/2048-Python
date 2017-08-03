@@ -1,0 +1,5 @@
+*.ipynb
+*.txt
+!README.txt
+__pycache__/*
+.DS_store
