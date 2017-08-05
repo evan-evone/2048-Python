@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from board import textBoard
+from board import board
 import random
 
 #
@@ -13,7 +13,7 @@ import random
 #                                                 
 #                                                 
 
-class thisBoard(textBoard): # Slight modifications for what is necessary
+class thisBoard(board): # Slight modifications for what is necessary
     def __init__(self, comp, width, height):
         self.directions = [[-1, -1], [-1, 0], [-1, 1], [0, -1], 
                            [0, 1], [1, -1], [1, 0], [1, 1]]
@@ -35,10 +35,18 @@ class thisBoard(textBoard): # Slight modifications for what is necessary
     
     def change(self, lst, new):
         self[lst[1]][lst[0]] = new
-
+        self.update()
+    
+    def update(self):
+        self.spots = []
+        for x in range(self.width):
+            for y in range(self.height):
+                if not self.get([x, y]).num:
+                    self.spots.append([x, y])
+    
     def showBoard(self):
         rslt = '\n'
-        for x in self:
+        for x in self[::-1]:
             for y in range(3):
                 rslt += ' '.join([z[y] for z in x]) + '\n'
             rslt += '\n'
@@ -74,5 +82,7 @@ class tile(list):
 
 board = thisBoard(tile(), 4, 4)
 print(board.showBoard())
-board.change(random.choice(board.spots), tile(2))
-print(board.showBoard())
+for x in range(4):
+    foo = random.choice(board.spots)
+    board.change(foo, tile(2))
+    print(board.showBoard())
