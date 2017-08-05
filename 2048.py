@@ -35,10 +35,18 @@ class thisBoard(board): # Slight modifications for what is necessary
     
     def change(self, lst, new):
         self[lst[1]][lst[0]] = new
-
+        self.update()
+    
+    def update(self):
+        self.spots = []
+        for x in range(self.width):
+            for y in range(self.height):
+                if not self.get([x, y]).num:
+                    self.spots.append([x, y])
+    
     def showBoard(self):
         rslt = '\n'
-        for x in self:
+        for x in self[::-1]:
             for y in range(3):
                 rslt += ' '.join([z[y] for z in x]) + '\n'
             rslt += '\n'
