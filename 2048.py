@@ -86,7 +86,7 @@ class thisBoard(board): # Slight modifications for what is necessary
 
         if udlr == 'r':
             duplicate = [y for y in duplicate]
-            print(duplicate) # testing
+              # print(duplicate) # testing
             duplicate = moveAll(duplicate)
             for ind1, x in enumerate(duplicate):
                 for ind0, y in enumerate(x):
@@ -133,10 +133,9 @@ def moveAll(lst):
 
 board = thisBoard(tile(), 4, 4)
 print(board.showBoard())
-for x in range(4):
+for x in range(2):
     foo = random.choice(board.spots)
     board.change(foo, tile(2))
-    print(board.showBoard())
 
   # print(board.doMove('u')) # working
   # print(board.showBoard())
@@ -146,3 +145,21 @@ for x in range(4):
   # print(board.showBoard())
   # print(board.doMove('r')) # working
   # print(board.showBoard())
+
+going = True
+while going:
+    order = input(board.showBoard() + '>>> ')
+    if order in ['u', 'd', 'l', 'r']:
+        board.doMove(order)
+        foo = random.choice(board.spots)
+        board.change(foo, tile(2))
+    else:
+        print('Error: Unkown direction:')
+        print('Direction must be a \'u\', \'d\', \'l\', or \'r\'.')
+    if len(board.spots) == 0:
+        score = 0
+        for x in board:
+            for y in x:
+                score += y.num
+        print('Game Over!\nYour Score: {0}.'.format(score))
+        break
