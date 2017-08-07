@@ -40,3 +40,32 @@ board, and take turns making moves. Additionally,
 move is made by player one will also occur on
 player two's board, adding an element of strategy
 to the game.
+
+### Running the game
+
+To run the game normally, type the following:
+
+    ./2048.py
+
+To run the game in debug mode, type the following:
+
+    ./2048.py --debug
+
+In debug mode, the computer will print information as
+it is executing the commands to move tiles in any direction.
+Additionally, input from the prompt ('>>> ') will be
+interpreted as a Python3 command, if not a _u_, _d_, _l_, or
+ _r_. Be careful, as a typo will cause your game to exit in
+debug mode.
+
+### Some commands to know in debug mode:
+
+    board.change(<spot>, tile(<num>))
+        # Will change the tile at <spot> (list: [x, y]) to the value of <num>
+    
+    [board.change(<spot>, tile(<num>)) for <index>, <spot> in enumerate(board.spots)]
+        # Will change the all tiles to <num> (which can be an expression, such ass 2 ** <index>);
+        # <index> and <spot> are any variable
+    
+    toggleSuppress()
+        # Will turn print during tile movement on or off (default is on), while leaving commands enabled

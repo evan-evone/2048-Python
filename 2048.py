@@ -1,7 +1,15 @@
 #!/usr/bin/env python
 
 from board import board
-import random
+import random # for new spots
+from sys import argv # for --debug
+import time # for --debug instructions
+
+debug = False
+suppressPrint = True
+if '--debug' in argv:
+    debug = True
+    suppressPrint = False
 
 #
 #  ______      __ _       _ _   _                 
@@ -59,7 +67,7 @@ class thisBoard(board): # Slight modifications for what is necessary
 
         if udlr == 'u':
             duplicate = [[y[x] for y in duplicate] for x in range(self.height)]
-              # print(duplicate) # testing
+            if debug and not suppressPrint: print(duplicate) # testing
             duplicate = moveAll(duplicate)
             for ind0, x in enumerate(duplicate):
                 for ind1, y in enumerate(x):
@@ -68,7 +76,7 @@ class thisBoard(board): # Slight modifications for what is necessary
 
         elif udlr == 'd':
             duplicate = [[y[x] for y in duplicate[::-1]] for x in range(self.height)]
-              # print(duplicate) # testing
+            if debug and not suppressPrint: print(duplicate) # testing
             duplicate = moveAll(duplicate)
             for ind0, x in enumerate(duplicate):
                 for ind1, y in enumerate(x[::-1]):
@@ -77,7 +85,7 @@ class thisBoard(board): # Slight modifications for what is necessary
 
         if udlr == 'l':
             duplicate = [y[::-1] for y in duplicate]
-              # print(duplicate) # testing
+            if debug and not suppressPrint: print(duplicate) # testing
             duplicate = moveAll(duplicate)
             for ind1, x in enumerate(duplicate):
                 for ind0, y in enumerate(x):
@@ -86,12 +94,13 @@ class thisBoard(board): # Slight modifications for what is necessary
 
         if udlr == 'r':
             duplicate = [y for y in duplicate]
-              # print(duplicate) # testing
+            if debug and not suppressPrint: print(duplicate) # testing
             duplicate = moveAll(duplicate)
             for ind1, x in enumerate(duplicate):
                 for ind0, y in enumerate(x):
                     self.change([ind0, ind1], tile(y))
-            return(duplicate)
+        if debug and not suppressPrint: print(duplicate)
+        return(duplicate)
 
 class tile(list):
     def __init__(self, num=''):
@@ -114,12 +123,35 @@ class tile(list):
 def moveAll(lst):
     for row in lst:
         for index in range(len(row)):
-            for num in range(index):
-                  # print(index, num, row) # testing
-                if row[num] == row[num + 1] or row[num + 1] == 0:
-                    row[num + 1] += row[num]; row[num] = 0
-                  # print() # testing
+            going2 = True
+            while going2:
+                for num in range(index):
+                    if debug and not suppressPrint: print(index, num, row) # testing
+                    if type(row[num]) is str:
+                        if int(row[num + 1]) == 0:
+                            row[num + 1] = row[num]; row[num] = 0
+                    elif row[num] > 0 and int(row[num + 1]) == 0:
+                        row[num + 1] = row[num]; row[num] = 0
+                    elif row[num] == row[num + 1]:
+                        row[num + 1] = str(2 * row[num]); row[num] = 0
+                    if debug and not suppressPrint: print() # testing
+                    
+                true = True
+                true2 = True
+                for x in range(index):
+                    if int(row[x]) != 0:
+                        true2 = False
+                    if not true2 and int(row[x]) == 0:
+                        true = False
+                if true:
+                    going2 = False
+                    
+        row = [int(x) for x in row]
     return(lst)
+
+def toggleSuppress():
+    global suppressPrint
+    suppressPrint = not suppressPrint
 
 #
 #   _____      _               
@@ -131,35 +163,40 @@ def moveAll(lst):
 #                       | |    
 #                       |_|    
 
+if debug:
+    print('Debug mode: ON')
+    print('All suppressed output will be displayed')
+    print('Input will be evaluated as python3 input')
+    time.sleep(3)
+
 board = thisBoard(tile(), 4, 4)
 print(board.showBoard())
 for x in range(2):
     foo = random.choice(board.spots)
     board.change(foo, tile(2))
 
-  # print(board.doMove('u')) # working
-  # print(board.showBoard())
-  # print(board.doMove('d')) # working
-  # print(board.showBoard())
-  # print(board.doMove('l')) # working
-  # print(board.showBoard())
-  # print(board.doMove('r')) # working
-  # print(board.showBoard())
-
 going = True
 while going:
-    order = input(board.showBoard() + '>>> ')
-    if order in ['u', 'd', 'l', 'r']:
-        board.doMove(order)
-        foo = random.choice(board.spots)
-        board.change(foo, tile(2))
-    else:
-        print('Error: Unkown direction:')
-        print('Direction must be a \'u\', \'d\', \'l\', or \'r\'.')
+    going3 = True # True until good input received
+    while going3:
+        order = input(board.showBoard() + '>>> ')
+        if order in ['u', 'd', 'l', 'r']:
+            board.doMove(order)
+            going3 = False
+        elif debug:
+            eval(order)
+        else:
+            print('Error: Unkown direction:')
+            print('Direction must be a \'u\', \'d\', \'l\', or \'r\'.')
+
     if len(board.spots) == 0:
+        print(board.showBoard())
         score = 0
         for x in board:
             for y in x:
                 score += y.num
         print('Game Over!\nYour Score: {0}.'.format(score))
         break
+    else: # add new tile
+        foo = random.choice(board.spots)
+        board.change(foo, tile(2))
