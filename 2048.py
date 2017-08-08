@@ -7,7 +7,7 @@ import time # for --debug instructions
 
 debug = False
 suppressPrint = True
-if '--debug' in argv:
+if '--debug' in argv or '-db' in argv:
     debug = True
     suppressPrint = False
 
