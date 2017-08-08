@@ -11,6 +11,10 @@ if '--debug' in argv or '-db' in argv:
     debug = True
     suppressPrint = False
 
+twoPlayer = False
+if '-t' in argv or '--two-player' in argv:
+    twoPlayer = True
+
 #
 #  ______      __ _       _ _   _                 
 #  |  _  \    / _(_)     (_| | (_)                
@@ -149,6 +153,18 @@ def moveAll(lst):
         row = [int(x) for x in row]
     return(lst)
 
+def showBoards():
+    rslt = 'Player 1:' + '\011' * 4 + 'Player 2:' +'\n' * 2
+    foo = [[board1[x], board2[x]] for x in range(len(board1))]
+    if debug and not suppressPrint: print(foo)
+    for x in foo[::-1]:
+        for y in range(3):
+            rslt += ' '.join(z[y] for z in x[0]) + '\011\011'
+            rslt += ' '.join(z[y] for z in x[1]) + '\n'
+        rslt += '\n'
+    return(rslt)
+        
+
 def toggleSuppress():
     global suppressPrint
     suppressPrint = not suppressPrint
@@ -168,35 +184,65 @@ if debug:
     print('All suppressed output will be displayed')
     print('Input will be evaluated as python3 input')
     time.sleep(3)
+if not twoPlayer:
+    board = thisBoard(tile(), 4, 4)
+    print(board.showBoard())
+    for x in range(2):
+        foo = random.choice(board.spots)
+        board.change(foo, tile(2))
 
-board = thisBoard(tile(), 4, 4)
-print(board.showBoard())
-for x in range(2):
-    foo = random.choice(board.spots)
-    board.change(foo, tile(2))
+if twoPlayer:
+    board1 = thisBoard(tile(), 4, 4)
+    board2 = thisBoard(tile(), 4, 4)
+    print(showBoards())
+    for x in range(2):
+        foo1 = random.choice(board1.spots)
+        foo2 = random.choice(board2.spots)
+        board1.change(foo1, tile(2))
+        board2.change(foo2, tile(2))
+    
+    turn = 0
 
 going = True
 while going:
     going3 = True # True until good input received
     while going3:
-        order = input(board.showBoard() + '>>> ')
+        if not twoPlayer: order = input(board.showBoard() + '>>> ')
+        else: order = input(showBoards() + ['>>> ', '... '][turn])
         if order in ['u', 'd', 'l', 'r']:
-            board.doMove(order)
+            if not twoPlayer: board.doMove(order)
+            else:
+                board1.doMove(order)
+                board2.doMove(order)
             going3 = False
+            turn = turn ^ 1
         elif debug:
             eval(order)
         else:
             print('Error: Unkown direction:')
             print('Direction must be a \'u\', \'d\', \'l\', or \'r\'.')
-
-    if len(board.spots) == 0:
-        print(board.showBoard())
-        score = 0
-        for x in board:
-            for y in x:
-                score += y.num
-        print('Game Over!\nYour Score: {0}.'.format(score))
-        break
-    else: # add new tile
-        foo = random.choice(board.spots)
-        board.change(foo, tile(2))
+    
+    if not twoPlayer:
+        if len(board.spots) == 0:
+            print(board.showBoard())
+            score = 0
+            for x in board:
+                for y in x:
+                    score += y.num
+            print('Game Over!\nYour Score: {0}.'.format(score))
+            break
+        else: # add new tile
+            foo = random.choice(board.spots)
+            if debug and not suppressPrint: print(foo)
+            board.change(foo, tile(2))
+    else:
+        if len(board1.spots) == 0:
+            print('Player 2 Wins!'); break
+        elif len(board2.spots) == 0:
+            print('Player 1 Wins!'); break
+        else:
+            foo1 = random.choice(board1.spots)
+            foo2 = random.choice(board2.spots)
+            if debug and not suppressPrint: print([foo1, foo2])
+            board1.change(foo1, tile(2))
+            board2.change(foo2, tile(2))

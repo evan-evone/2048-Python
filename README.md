@@ -34,13 +34,6 @@ that act as &rdquo;boards.&ldquo; Some of the functions
 are modified by **2048.py** to be more appropriate for
 what is necessary for 2048. 
 
-The two player game will work with the same
-controls, but the players will each have their own
-board, and take turns making moves. Additionally,
-move is made by player one will also occur on
-player two's board, adding an element of strategy
-to the game.
-
 ### Running the game
 
 To run the game normally, type the following:
@@ -69,3 +62,45 @@ debug mode.
     
     toggleSuppress()
         # Will turn print during tile movement on or off (default is on), while leaving commands enabled
+
+# 2048 - Python - Two Players
+### Also for the command line
+
+    [     ] [     ] [     ] [     ]     [     ] [     ] [     ] [     ]
+    [  1  ] [  8  ] [ 256 ] [  2  ]     [  1  ] [  4  ] [ 16  ] [2048 ]
+    [     ] [     ] [     ] [     ]     [     ] [     ] [     ] [     ]
+    
+    [     ] [     ] [     ] [     ]     [     ] [     ] [     ] [     ]
+    [  4  ] [ 16  ] [  2  ] [2048 ]     [  4  ] [  8  ] [ 256 ] [  4  ]
+    [     ] [     ] [     ] [     ]     [     ] [     ] [     ] [     ]
+    
+    [     ] [     ] [     ] [     ]     [     ] [     ] [     ] [     ]
+    [  1  ] [ 256 ] [2048 ] [  4  ]     [  4  ] [ 64  ] [  4  ] [  1  ]
+    [     ] [     ] [     ] [     ]     [     ] [     ] [     ] [     ]
+    
+    [     ] [     ] [     ] [     ]     [     ] [     ] [     ] [     ]
+    [  2  ] [ 16  ] [ 32  ] [  2  ]     [     ] [  4  ] [  8  ] [  2  ]
+    [     ] [     ] [     ] [     ]     [     ] [     ] [     ] [     ]
+
+
+The two player game works with the same
+controls, but the players each have their own
+board, and take turns making moves. Additionally,
+moves made by Player 1 will also occur on
+Player 2's board, adding an element of strategy
+to the game. This game also has a debug mode.
+
+The first player who has no room for new tiles loses,
+and the other is declared the winnder.
+
+### Running for two players
+
+To run the game normally, type the following:
+
+     ./2048.py --two-player  OR  ./2048.py -t
+
+To run the game in debug mode, type the following:
+
+    ./2048.py --two-player --debug  OR  ./2048.py -t -db
+
+Commands in debug mode are the same.
