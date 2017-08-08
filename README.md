@@ -49,7 +49,7 @@ To run the game normally, type the following:
 
 To run the game in debug mode, type the following:
 
-    ./2048.py --debug
+    ./2048.py --debug  OR  ./2048.py -db
 
 In debug mode, the computer will print information as
 it is executing the commands to move tiles in any direction.
