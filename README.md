@@ -69,3 +69,10 @@ debug mode.
     
     toggleSuppress()
         # Will turn print during tile movement on or off (default is on), while leaving commands enabled
+
+### Note: renderer.py
+On branch renderer, there is a file known as **renderer.py**. This
+file is an experiment with deleting text after it is printed to "render"
+and "re-render" objects–in this case the 2048 board–on the screen. Modification
+and improvement upon this file are welcomed, but currently I cannot make this
+idea work. If you have any ideas, _PLEASE_ fork the project and include them.
