@@ -38,11 +38,11 @@ what is necessary for 2048.
 
 To run the game normally, type the following:
 
-    ./2048.py
+    $ ./2048.py
 
 To run the game in debug mode, type the following:
 
-    ./2048.py --debug  OR  ./2048.py -db
+    $ ./2048.py --debug  OR  $ ./2048.py -db
 
 In debug mode, the computer will print information as
 it is executing the commands to move tiles in any direction.
@@ -97,10 +97,10 @@ and the other is declared the winner.
 
 To run the game normally, type the following:
 
-     ./2048.py --two-player  OR  ./2048.py -t
+     $ ./2048.py --two-player  OR  $ ./2048.py -t
 
 To run the game in debug mode, type the following:
 
-    ./2048.py --two-player --debug  OR  ./2048.py -t -db
+    $ ./2048.py --two-player --debug  OR  $ ./2048.py -t -db
 
 Commands in debug mode are the same.
