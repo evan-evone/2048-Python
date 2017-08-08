@@ -91,7 +91,7 @@ Player 2's board, adding an element of strategy
 to the game. This game also has a debug mode.
 
 The first player who has no room for new tiles loses,
-and the other is declared the winnder.
+and the other is declared the winner.
 
 ### Running for two players
 
