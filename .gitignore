@@ -1,4 +1,5 @@
 *.ipynb
+*.pyc
 *.txt
 !README.txt
 __pycache__/*
