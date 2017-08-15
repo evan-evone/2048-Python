@@ -1,9 +1,19 @@
 #!/usr/bin/env python
 
+#
+#  ______      _                   _     _ _                    _          
+#  |  _  \    | |          ___    | |   (_| |                  (_)         
+#  | | | |__ _| |_ __ _   ( _ )   | |    _| |__  _ __ __ _ _ __ _  ___ ___ 
+#  | | | / _` | __/ _` |  / _ \/\ | |   | | '_ \| '__/ _` | '__| |/ _ / __|
+#  | |/ | (_| | || (_| | | (_>  < | |___| | |_) | | | (_| | |  | |  __\__ \
+#  |___/ \__,_|\__\__,_|  \___/\/ \_____|_|_.__/|_|  \__,_|_|  |_|\___|___/
+#                                                                          
+#                                                                          
+
 from board import board
-import random # for new spots
-from sys import argv # for --debug
-import time # for --debug instructions
+import random                                                                           # for new spots
+from sys import argv                                                                    # for debug
+import time                                                                             # for debug instructions
 
 debug = False
 suppressPrint = True
@@ -25,14 +35,13 @@ if '-t' in argv or '--two-player' in argv:
 #                                                 
 #                                                 
 
-class thisBoard(board): # Slight modifications for what is necessary
+class thisBoard(board):                                                                 # Modifications for what is necessary
     def __init__(self, comp, width, height):
         self.directions = [[-1, -1], [-1, 0], [-1, 1], [0, -1], 
                            [0, 1], [1, -1], [1, 0], [1, 1]]
         self.width = width
         self.height = height
-          # no use for self.represent
-          # self.represent = []
+          # self.represent = []                                                         # no use for self.represent 
         self.spots = []
         for x in range(width):
             for y in range(height):
@@ -67,11 +76,11 @@ class thisBoard(board): # Slight modifications for what is necessary
     def doMove(self, udlr=None):
         if udlr is None: return()
         duplicate = [[x.num for x in y] for y in self]
-          # print(duplicate) # testing
+        if debug and not suppressPrint: print(duplicate)                                # testing
 
         if udlr == 'u':
             duplicate = [[y[x] for y in duplicate] for x in range(self.height)]
-            if debug and not suppressPrint: print(duplicate) # testing
+            if debug and not suppressPrint: print(duplicate)                            # testing
             duplicate = moveAll(duplicate)
             for ind0, x in enumerate(duplicate):
                 for ind1, y in enumerate(x):
@@ -79,8 +88,8 @@ class thisBoard(board): # Slight modifications for what is necessary
             return(duplicate)
 
         elif udlr == 'd':
-            duplicate = [[y[x] for y in duplicate[::-1]] for x in range(self.height)]
-            if debug and not suppressPrint: print(duplicate) # testing
+            duplicate = [[y[x] for y in duplicate[::-1]] for x in range(self.height)]   
+            if debug and not suppressPrint: print(duplicate)                            # testing
             duplicate = moveAll(duplicate)
             for ind0, x in enumerate(duplicate):
                 for ind1, y in enumerate(x[::-1]):
@@ -89,7 +98,7 @@ class thisBoard(board): # Slight modifications for what is necessary
 
         if udlr == 'l':
             duplicate = [y[::-1] for y in duplicate]
-            if debug and not suppressPrint: print(duplicate) # testing
+            if debug and not suppressPrint: print(duplicate)                            # testing
             duplicate = moveAll(duplicate)
             for ind1, x in enumerate(duplicate):
                 for ind0, y in enumerate(x):
@@ -98,7 +107,7 @@ class thisBoard(board): # Slight modifications for what is necessary
 
         if udlr == 'r':
             duplicate = [y for y in duplicate]
-            if debug and not suppressPrint: print(duplicate) # testing
+            if debug and not suppressPrint: print(duplicate)                            # testing
             duplicate = moveAll(duplicate)
             for ind1, x in enumerate(duplicate):
                 for ind0, y in enumerate(x):
@@ -130,7 +139,7 @@ def moveAll(lst):
             going2 = True
             while going2:
                 for num in range(index):
-                    if debug and not suppressPrint: print(index, num, row) # testing
+                    if debug and not suppressPrint: print(index, num, row)              # testing
                     if type(row[num]) is str:
                         if int(row[num + 1]) == 0:
                             row[num + 1] = row[num]; row[num] = 0
@@ -138,7 +147,7 @@ def moveAll(lst):
                         row[num + 1] = row[num]; row[num] = 0
                     elif row[num] == row[num + 1]:
                         row[num + 1] = str(2 * row[num]); row[num] = 0
-                    if debug and not suppressPrint: print() # testing
+                    if debug and not suppressPrint: print()                             # testing
                     
                 true = True
                 true2 = True
@@ -159,7 +168,7 @@ def showBoards():
     if debug and not suppressPrint: print(foo)
     for x in foo[::-1]:
         for y in range(3):
-            rslt += ' '.join(z[y] for z in x[0]) + '\011\011'
+            rslt += ' '.join(z[y] for z in x[0]) + '\011\011'                           # horizontal-tab
             rslt += ' '.join(z[y] for z in x[1]) + '\n'
         rslt += '\n'
     return(rslt)
@@ -204,39 +213,34 @@ if twoPlayer:
     turn = 0
 
 going = True
+
+#
+#   _____                        _                       
+#  |  __ \                      | |                      
+#  | |  \/ __ _ _ __ ___   ___  | |     ___   ___  _ __  
+#  | | __ / _` | '_ ` _ \ / _ \ | |    / _ \ / _ \| '_ \ 
+#  | |_\ | (_| | | | | | |  __/ | |___| (_) | (_) | |_) |
+#   \____/\__,_|_| |_| |_|\___| \_____/\___/ \___/| .__/ 
+#                                                 | |    
+#                                                 |_|    
+
 while going:
-    going3 = True # True until good input received
-    while going3:
-        if not twoPlayer: order = input(board.showBoard() + '>>> ')
-        else: order = input(showBoards() + ['>>> ', '... '][turn])
-        if order in ['u', 'd', 'l', 'r']:
-            if not twoPlayer: board.doMove(order)
-            else:
+    if twoPlayer:
+        going3 = True                                                                   # True until good input received
+        while going3:
+            order = input(showBoards() + ['>>> ', '... '][turn])
+            if order in ['u', 'd', 'l', 'r']:
                 board1.doMove(order)
                 board2.doMove(order)
-            going3 = False
-            turn = turn ^ 1
-        elif debug:
-            eval(order)
-        else:
-            print('Error: Unkown direction:')
-            print('Direction must be a \'u\', \'d\', \'l\', or \'r\'.')
-    
-    if not twoPlayer:
-        if len(board.spots) == 0:
-            print(board.showBoard())
-            score = 0
-            for x in board:
-                for y in x:
-                    score += y.num
-            print('Game Over!\nYour Score: {0}.'.format(score))
-            break
-        else: # add new tile
-            foo = random.choice(board.spots)
-            if debug and not suppressPrint: print(foo)
-            board.change(foo, tile(2))
-    else:
-        if len(board1.spots) == 0:
+                going3 = False
+                turn = turn ^ 1
+            elif debug:
+                eval(order)
+            else:
+                print('Error: Unknown direction:')
+                print('Direction must be a \'u\', \'d\', \'l\', or \'r\'.')
+        
+        if len(board1.spots) == 0:                                                      # check for game over.
             print('Player 2 Wins!'); break
         elif len(board2.spots) == 0:
             print('Player 1 Wins!'); break
@@ -246,3 +250,29 @@ while going:
             if debug and not suppressPrint: print([foo1, foo2])
             board1.change(foo1, tile(2))
             board2.change(foo2, tile(2))
+        
+    else:
+        going3 = True                                                                   # True until good input received
+        while going3:
+            order = input(board.showBoard() + '>>> ')
+            if order in ['u', 'd', 'l', 'r']:
+                board.doMove(order)
+                going3 = False
+            elif debug:
+                eval(order)
+            else:
+                print('Error: Unknown direction: ')
+                print('Direction must be a \'u\', \'d\', \'l\', or \'r\'.')
+    
+        if len(board.spots) == 0:                                                       # check for game over
+            print(board.showBoard())
+            score = 0
+            for x in board:
+                for y in x:
+                    score += y.num
+            print('Game Over!\nYour Score: {0}.'.format(score))
+            break
+        else:                                                                           # add new tile
+            foo = random.choice(board.spots)
+            if debug and not suppressPrint: print(foo)
+            board.change(foo, tile(2))
