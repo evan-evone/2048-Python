@@ -11,9 +11,10 @@
 #                                                                          
 
 from board import board
-import random                                                                           # for new spots
 from sys import argv                                                                    # for debug
+import random                                                                           # for new spots
 import time                                                                             # for debug instructions
+import os
 
 debug = False
 suppressPrint = True
@@ -22,8 +23,32 @@ if '--debug' in argv or '-db' in argv:
     suppressPrint = False
 
 twoPlayer = False
+localmt = False
 if '-t' in argv or '--two-player' in argv:
     twoPlayer = True
+    if '-l' in argv or '--local' in argv:
+        localmt = True
+
+game = ''
+doCatchup = False
+if localmt:
+    game = input('Game Name: ') + '.txt'
+    if game == '.txt': game = 'game.txt'
+    
+    if debug and not suppressPrint: print(game)
+    if debug and not suppressPrint: 
+        print(os.popen('if [ -f {0} ]; then echo true; fi'.format(game)).read())
+    
+    startup = True
+    if len(os.popen('if [ -f {0} ]; then echo true; fi'.format(game)).read()) > 0:
+        if input('Game File Found. Would you like to import the game? ') in\
+            ['yes', 'Yes', 'y', 'Y']:
+            doCatchup = True
+            startup = False                                                             # says that new file need not be created.
+            if debug and not suppressPrint:
+                myfile = open(game, 'r')
+                print(myfile.read())
+                myfile.close()
 
 #
 #  ______      __ _       _ _   _                 
@@ -163,7 +188,7 @@ def moveAll(lst):
     return(lst)
 
 def showBoards():
-    rslt = 'Player 1:' + '\011' * 4 + 'Player 2:' +'\n' * 2
+    rslt = 'Player 1:' + ' ' * (8 * 4 - 1) + 'Player 2:' +'\n' * 2
     foo = [[board1[x], board2[x]] for x in range(len(board1))]
     if debug and not suppressPrint: print(foo)
     for x in foo[::-1]:
@@ -172,7 +197,34 @@ def showBoards():
             rslt += ' '.join(z[y] for z in x[1]) + '\n'
         rslt += '\n'
     return(rslt)
-        
+
+def export(turn, lst, name=game):
+    myfile = open(name, 'w')
+    if not localmt: return('fatal: local multiplayer is not active')                    # currently only save for multiplayer for ease
+    dic = {}
+    for x in range(board1.width):
+        for y in range(board1.height):
+            dic['[{0}, {1}]'.format(x, y)] = \
+                [board1.get([x, y]).num, board2.get([x, y]).num]
+    mystr = '{0}\n{1}\n{2}\n'.format(turn, dic, lst)
+    myfile.truncate(0)
+    myfile.write(mystr)
+    if debug and not suppressPrint: print(mystr)                                        # make sure things are correct
+    myfile.close()
+
+
+def catchup(boards, name=game):
+    myfile = open(name, 'r')
+    global turn
+    global players
+    turn = eval(myfile.readline())
+    dic = eval(myfile.readline())
+    players = eval(myfile.readline())
+    myfile.close()
+    if debug and not suppressPrint: print(turn, dic, sep='\n')                          # make sure things are correct
+    for spot in [eval(x) for x in dic.keys()]:
+        for y, x in enumerate(boards):
+            x.change(spot, tile(dic[str(spot)][y]))
 
 def toggleSuppress():
     global suppressPrint
@@ -212,6 +264,13 @@ if twoPlayer:
     
     turn = 0
 
+    if startup:
+        players = [''.join(os.popen('tty').read().split()), input('Path to P2 tty: ')]
+        export(0, players)
+
+    if doCatchup: catchup([board1, board2])
+    print(showBoards())
+
 going = True
 
 #
@@ -227,13 +286,31 @@ going = True
 while going:
     if twoPlayer:
         going3 = True                                                                   # True until good input received
+        if localmt:
+            catchup([board1, board2])
+            if debug and not suppressPrint:
+                print(players[turn])
+                print(''.join(os.popen('tty').read().split()))
+            if not players[turn] == ''.join(os.popen('tty').read().split()):
+                going3 = False                                                          # Will stop input loop until change in file
+                print('Waiting for player {0}.'.format(turn + 1), end='\r')             # Note '\r' to stop message from overflowing terminal
         while going3:
-            order = input(showBoards() + ['>>> ', '... '][turn])
+            order = input(showBoards() + ['>>> ', '... '][turn])                        
             if order in ['u', 'd', 'l', 'r']:
                 board1.doMove(order)
                 board2.doMove(order)
                 going3 = False
                 turn = turn ^ 1
+                if localmt:
+                    
+                    foo1 = random.choice(board1.spots)
+                    foo2 = random.choice(board2.spots)
+                    if debug and not suppressPrint: print([foo1, foo2])
+                    board1.change(foo1, tile(2))
+                    board2.change(foo2, tile(2))
+
+                    print(showBoards())
+                    export(turn, players)
             elif debug:
                 eval(order)
             else:
